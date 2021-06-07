@@ -12,7 +12,7 @@ $ npm install yeetcode
 Sample usage
 
 ```js
-import Tester from 'yeetcode.js'
+import Tester from 'yeetcode'
 
 const unitTest = new Tester()
 const foo = (a, b) => a + b
