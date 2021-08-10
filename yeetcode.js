@@ -1,25 +1,23 @@
 import assert from 'assert'
 const RED = "\x1b[31m"
-const YELLOW ="\x1b[33m"
+const YELLOW = "\x1b[33m"
 const GREEN = "\x1b[32m"
 const WHITE = "\x1b[37m"
 
-const EQ_MESSAGE= (expected, actual) => `${RED}expected ${expected}, got ${actual}`
+const EQ_MESSAGE = (expected, actual) => `${RED}expected ${expected}, got ${actual}`
 const NE_MESSAGE = (expected, actual) => `${RED}expected value other than ${expected}, got ${actual}`
-const COMPARE_MESSATE = (expected, actual, operator) => `${RED}${actual} is not ${operator} than ${expected}`
-const RANGE_MESSAGE = (actual, start, end, incStart, incEnd) => `${RED}${actual} is not in range of ${incStart}${start}, ${end}${incEnd}` 
-const OBJ_MESSAGE = (key, value) =>`${RED}${key} does not map to ${value}`
-const KEY_MESSAGE = (key) =>`${RED}${key} is not present in the object's keys`
-const VAL_MESSAGE = (value) =>`${RED}${value} is not present in the object's values`
+const COMPARE_MESSAGE = (expected, actual, operator) => `${RED}${actual} is not ${operator} than ${expected}`
+const RANGE_MESSAGE = (actual, start, end, incStart, incEnd) => `${RED}${actual} is not in range of ${incStart}${start}, ${end}${incEnd}`
+const OBJ_MESSAGE = (key, value) => `${RED}${key} does not map to ${value}`
+const KEY_MESSAGE = (key) => `${RED}${key} is not present in the object's keys`
+const VAL_MESSAGE = (value) => `${RED}${value} is not present in the object's values`
 
 
 let testNo = 0
-let pass = (n) =>`${GREEN}Test ${n} passed ✔️${WHITE}`
-let fail = (n) =>`${RED}TEST ${n} FAILED ❌ ${WHITE}`
-class Tester
-{
-    constructor()
-    {
+let pass = (n) => `${GREEN}Test ${n} passed ✔️${WHITE}`
+let fail = (n) => `${RED}TEST ${n} FAILED ❌ ${WHITE}`
+class Tester {
+    constructor() {
         console.log("YeetCode Unit Tester🧪")
         console.log("====================")
     }
@@ -31,8 +29,7 @@ class Tester
      * @param {any} actual
      * @param {string} message 
      */
-    assertEq(expected, actual, message=EQ_MESSAGE(expected, actual)) 
-    {
+    assertEq = (expected, actual, message = EQ_MESSAGE(expected, actual)) => {
         assert.deepStrictEqual(actual, expected, `${fail(testNo)}: ${message}`)
         console.log(pass(testNo))
         testNo++;
@@ -44,8 +41,7 @@ class Tester
      * @param {any} actual 
      * @param {string} message 
      */
-    assertNotEq(expected, actual, message=NE_MESSAGE(expected, actual)) 
-    {
+    assertNotEq = (expected, actual, message = NE_MESSAGE(expected, actual)) => {
         assert.notDeepStrictEqual(actual, expected, `${fail(testNo)}: ${message}`)
         console.log(pass(testNo))
         testNo++;
@@ -57,14 +53,14 @@ class Tester
      * @param {boolean} statement
      * @param {string} message 
      */
-    assertTrue(statement, message =""){this.assertEq(statement, true, message)}
+    assertTrue = (statement, message = "") => this.assertEq(statement, true, message)
 
     /**
      * statement is false
      * @param {boolean} statement
      * @param {string} message 
      */
-    assertFalse(statement, message ="") {this.assertEq(statement, false, message)}
+    assertFalse = (statement, message = "") => this.assertEq(statement, false, message)
 
     //string
     /**
@@ -72,21 +68,21 @@ class Tester
      * @param {string} expected 
      * @param {string} actual 
      */
-    assertEqIgnoreCase(expected, actual){this.assertEq(expected.toLowerCase(), actual.toLowerCase())}
+    assertEqIgnoreCase = (expected, actual) => this.assertEq(expected.toLowerCase(), actual.toLowerCase())
 
     /**
      * matches regexp
      * @param {RegExp | String} actual 
      * @param {RegExp} pattern 
      */
-    assertMatch(actual, pattern){this.assertTrue(pattern.test(actual))}
+    assertMatch = (actual, pattern) => this.assertTrue(pattern.test(actual))
 
     /**
      * does not match regexp
      * @param {RegExp | String} actual 
      * @param {RegExp} pattern 
      */
-    assertNotMatch(actual, pattern){this.assertFalse(pattern.test(actual));}
+    assertNotMatch = (actual, pattern) => this.assertFalse(pattern.test(actual));
 
     //numbers 
     /**
@@ -94,32 +90,28 @@ class Tester
      * @param {number} expected 
      * @param {number} actual 
      */
-    assertGreaterThan(expected, actual)
-    {this.assertTrue(actual > expected, COMPARE_MESSATE(expected, actual, '>'))}
+    assertGreaterThan = (expected, actual) => this.assertTrue(actual > expected, COMPARE_MESSAGE(expected, actual, '>'))
 
     /**
      * less than
      * @param {number} expected 
      * @param {number} actual 
      */
-    assertLessThan(expected, actual)
-    {this.assertTrue(actual < expected, COMPARE_MESSATE(expected, actual, '<'))}
+    assertLessThan = (expected, actual) => this.assertTrue(actual < expected, COMPARE_MESSAGE(expected, actual, '<'))
 
     /**
      * greater than or equal to
      * @param {number} expected 
      * @param {number} actual 
      */
-    assertGreaterOrEq(expected, actual)
-    {this.assertTrue(actual >= expected, COMPARE_MESSATE(expected, actual, '>='))}
+    assertGreaterOrEq = (expected, actual) => this.assertTrue(actual >= expected, COMPARE_MESSAGE(expected, actual, '>='))
 
     /**
      * less than or equal to 
      * @param {number} expected 
      * @param {number} actual 
      */
-    assertLessOrEq(expected, actual)
-    {this.assertTrue(actual <= expected, COMPARE_MESSATE(expected, actual, '<='))}
+    assertLessOrEq = (expected, actual) => this.assertTrue(actual <= expected, COMPARE_MESSAGE(expected, actual, '<='))
 
     /**
      * inside range inclusive unless specified otherwise
@@ -130,26 +122,25 @@ class Tester
      * @param {number} end 
      * @param {Object} include 
      */
-    assertInRange(actual, start, end, include={start: true, end: true})
-    {
-        if (!start || !end) 
-        console.warn(`${YELLOW} Usage:⚠️
+    assertInRange = (actual, start, end, include = { start: true, end: true }) => {
+        if (!start || !end)
+            console.warn(`${YELLOW} Usage:⚠️
         assertInRange(actual, start, end)
         assertInRange(actual, start, end, {start: boolean, end: boolean})
         ${WHITE}`)
-        
-        else if (include.start && include.end) 
-            this.assertTrue(actual >=start && actual <=end, RANGE_MESSAGE(actual, start, end, '[', ']'))
-        
-        else if (!include.start && !include.end) 
-            this.assertTrue(actual > start && actual<end, RANGE_MESSAGE(actual, start, end, '(', ')'))
-        
+
+        else if (include.start && include.end)
+            this.assertTrue(actual >= start && actual <= end, RANGE_MESSAGE(actual, start, end, '[', ']'))
+
+        else if (!include.start && !include.end)
+            this.assertTrue(actual > start && actual < end, RANGE_MESSAGE(actual, start, end, '(', ')'))
+
         else if (include.start && !include.end)
-            this.assertTrue(actual >=start && actual <end, RANGE_MESSAGE(actual, start, end, '[', ')'))
-        
-        else if (!include.start && include.end) 
-            this.assertTrue(actual >start && actual<=end, RANGE_MESSAGE(actual, start, end, '(', ']'))
-        
+            this.assertTrue(actual >= start && actual < end, RANGE_MESSAGE(actual, start, end, '[', ')'))
+
+        else if (!include.start && include.end)
+            this.assertTrue(actual > start && actual <= end, RANGE_MESSAGE(actual, start, end, '(', ']'))
+
         else console.error(`${RED}something went wrong!❌`)
     }
 
@@ -160,21 +151,21 @@ class Tester
      * @param {string} key 
      * @param {any} value 
      */
-    assertKeyValue(actual, key, value){this.assertEq(actual[key], value, OBJ_MESSAGE(key, value))}
+    assertKeyValue = (actual, key, value) => this.assertEq(actual[key], value, OBJ_MESSAGE(key, value))
 
     /**
      * object contains key
      * @param {Object} actual 
      * @param {string} key 
      */
-    assertHasKey(actual, key){this.assertTrue(Object.keys(actual).some(k => k===key),KEY_MESSAGE(key))}
+    assertHasKey = (actual, key) => this.assertTrue(Object.keys(actual).some(k => k === key), KEY_MESSAGE(key))
 
     /**
      * object contains value
      * @param {Object} actual 
      * @param {any} value 
      */
-    assertHasValue(actual, value){this.assertTrue(Object.values(actual).some(v => v===value),VAL_MESSAGE(value))}
+    assertHasValue = (actual, value) => this.assertTrue(Object.values(actual).some(v => v === value), VAL_MESSAGE(value))
 }
 
 export default Tester
