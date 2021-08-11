@@ -23,3 +23,15 @@ let myObj = {key: "value"}
 unitTest.assertKeyValue(myObj, "key", "value")
 unitTest.assertHasKey(myObj, "key")
 unitTest.assertHasValue(myObj, "value")
+
+const foo = () => {throw new Error("poop")}
+unitTest.assertThrows(() => foo(), Error)
+unitTest.assertThrows(() => foo(), Error, {checkMessage: true}, "poop")
+
+// fail a test
+// unitTest.assertFalse(true)
+// unitTest.assertKeyValue(myObj, "k", "v")
+// unitTest.assertThrowsMessage(()=> foo(), Error, "chips")
+
+
+

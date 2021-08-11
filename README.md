@@ -3,13 +3,13 @@
 ## Simple unit test class
 
 
-Install
+### Install
 
 ```bash
 $ npm install yeetcode
 ```
 
-Sample usage
+### Sample usage
 
 ```js
 import Tester from 'yeetcode'
@@ -17,12 +17,16 @@ import Tester from 'yeetcode'
 const unitTest = new Tester()
 const foo = (a, b) => a + b
 
+// equality test
 unitTest.assertEq(5, foo(3, 2)) // test should pass
+
+// boolean test
+unitTest.assertTrue(foo(3, 2)===5)// test should pass
 
 ```
 
 
-All assert functions
+### All assert functions
 ```ts
 // any value type
 assertEq(expected: any, actual: any)
@@ -53,4 +57,8 @@ assertInRange(actual: number, start: number, end: number, include: Object)
 assertKeyValue(actual: Object, key: string, value: any)
 assertHasKey(actual: Object, key: string)
 assertHasValue(actual: Object, value: any)
+
+//error
+assertThrows(func: Function, expectedError: Error)
+assertThrows(func: Function, expectedError: Error, options: Object, errorMessage: string)
 ```
