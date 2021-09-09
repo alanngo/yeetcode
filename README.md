@@ -1,6 +1,6 @@
 # YeetCode
 
-## Simple unit test class
+## Promise Based Unit Testing
 
 
 ### Install
@@ -9,20 +9,43 @@
 $ npm install yeetcode
 ```
 
-### Sample usage
+### Create a simple test case
 
 ```js
-import Tester from 'yeetcode'
+import test from 'yeetcode'
 
-const unitTest = new Tester()
-const foo = (a, b) => a + b
+const foo = (a,b) => a + b
+test("TestDescription").then(ut =>
+{
+    ut.assertEq(5, foo(3 + 2))
+})
+```
 
-// equality test
-unitTest.assertEq(5, foo(3, 2)) // test should pass
+### Run multiple tests
+```js
+import test from 'yeetcode'
 
-// boolean test
-unitTest.assertTrue(foo(3, 2)===5)// test should pass
 
+test("Test Suite 0").then(ut =>
+{
+    // test cases here
+    ...
+}).then(() =>
+{
+    test("Test Suite 1").then(ut =>
+    {
+        // more test cases
+        ...
+    })
+}).then(() =>
+{
+    test("Test Suite 2").then(ut =>
+    {
+        // more test cases
+        ...
+    })
+})
+...
 ```
 
 
@@ -30,35 +53,36 @@ unitTest.assertTrue(foo(3, 2)===5)// test should pass
 ```ts
 // any value type
 assertEq(expected: any, actual: any)
-assertEq(expected: any, actual: any, message: string)
+assertEq(expected: any, actual: any, message: String)
 assertNotEq(expected: any, actual: any)
-assertNotEq(expected: any, actual: any, message: string)
+assertNotEq(expected: any, actual: any, message: String)
 
 //boolean
 assertTrue(statement: boolean)
-assertTrue(statement: boolean, message: string)
+assertTrue(statement: boolean, message: String)
 assertFalse(statement: boolean)
-assertFalse(statement: boolean, message: string)
+assertFalse(statement: boolean, message: String)
 
-//string
-assertEqIgnoreCase(expected: string, actual: string)
-assertMatch(expected: string | RegExp, actual: RegExp)
-assertNotMatch(expected: string | RegExp, actual: RegExp)
+//String
+assertEqIgnoreCase(expected: String, actual: String)
+assertMatch(expected: String | RegExp, actual: RegExp)
+assertNotMatch(expected: String | RegExp, actual: RegExp)
 
-//number
-assertGreaterThan(expected: number, actual: number)
-assertLessThan(expected: number, actual: number)
-assertGreaterOrEq(expected: number, actual: number)
-assertLessOrEq(expected: number, actual: number)
-assertInRange(actual: number, start: number, end: number)
-assertInRange(actual: number, start: number, end: number, include: Object)
+//Number
+assertGreaterThan(expected: Number, actual: Number)
+assertLessThan(expected: Number, actual: Number)
+assertGreaterOrEq(expected: Number, actual: Number)
+assertLessOrEq(expected: Number, actual: Number)
+assertInRange(actual: Number, start: Number, end: Number)
+assertInRange(actual: Number, start: Number, end: Number, include: {start: boolean, end: boolean})
 
 //objects
-assertKeyValue(actual: Object, key: string, value: any)
-assertHasKey(actual: Object, key: string)
+assertKeyValue(actual: Object, key: String, value: any)
+assertHasKey(actual: Object, key: String)
 assertHasValue(actual: Object, value: any)
 
 //error
 assertThrows(func: Function, expectedError: Error)
-assertThrows(func: Function, expectedError: Error, options: Object, errorMessage: string)
+assertThrows(func: Function, expectedError: Error, options: {checkMessage: boolean}, errorMessage: String)
 ```
+### Usage for advanced assert functions

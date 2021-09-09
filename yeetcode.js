@@ -4,8 +4,8 @@ const YELLOW = "\x1b[33m"
 const GREEN = "\x1b[32m"
 const WHITE = "\x1b[37m"
 
-const EQ_MESSAGE = (expected, actual) => `${RED}expected ${expected}, got ${actual}`
-const NE_MESSAGE = (expected, actual) => `${RED}expected value other than ${expected}, got ${actual}`
+const EQ_MESSAGE = (expected, actual) => `${RED}Expected ${expected}, got ${actual}`
+const NE_MESSAGE = (expected, actual) => `${RED}Expected value other than ${expected}, got ${actual}`
 const BOOLEAN_MESSAGE = (bool) =>`${RED}Statement should be ${bool}`
 const COMPARE_MESSAGE = (expected, actual, operator) => `${RED}${actual} is not ${operator} than ${expected}`
 const RANGE_MESSAGE = (actual, start, end, incStart, incEnd) => `${RED}${actual} is not in range of ${incStart}${start}, ${end}${incEnd}`
@@ -13,19 +13,25 @@ const OBJ_MESSAGE = (key, value) => `${RED}Key: ${key} does not map to Value: ${
 const KEY_MESSAGE = (key) => `${RED}${key} is not present in the object's keys`
 const VAL_MESSAGE = (value) => `${RED}${value} is not present in the object's values`
 const THROW_MESSAGE = (error) =>`${RED}${error} was not thrown`
-const ERR_MESSAGE = (expected, expectedMessage, actual) =>`${RED} Wrong Error thrown and/or wrong message\n`+
+const ERR_MESSAGE = (expected, expectedMessage, actual) =>`${RED}Wrong Error thrown and/or wrong message\n`+
 `Excpected Error: ${expected.name}, Message: ${expectedMessage}\n`+
 `Actual Error Thrown: ${actual.name}, Message: ${actual.message}`
+
  
-let pass = (n) => `${GREEN}🧪 Test ${n} passed ✔️${WHITE}`
-let fail = (n) => `${RED}🔥 TEST ${n} FAILED ❌ ${WHITE}`
-class Tester {
-    
-    #testNo = 0
-    constructor() {
-        console.log("=======================")
-        console.log("YeetCode Unit Tester ⚗️")
-        console.log("=======================")
+let pass = (n) => `${GREEN}🧪 Test Case ${n} passed ✔️${WHITE}`
+let fail = (n) => `${RED}🔥 TEST CASE ${n} FAILED ❌ ${WHITE}`
+
+class Tester 
+{
+    // private variables
+    #testNo
+
+    constructor(description="") 
+    {
+        this.#testNo = 0
+        console.log("========================================================================")
+        console.log(`Description: ${description}`)
+        console.log("========================================================================")
     }
 
     // values
@@ -35,10 +41,22 @@ class Tester {
      * @param {any} actual
      * @param {string} message 
      */
-    assertEq = (expected, actual, message = EQ_MESSAGE(expected, actual)) => {
-        deepStrictEqual(actual, expected, `${fail(this.#testNo)}: ${message}`)
-        console.log(pass(this.#testNo))
-        this.#testNo++;
+    assertEq = (expected, actual, message = EQ_MESSAGE(expected, actual)) => 
+    {
+        try
+        {
+            deepStrictEqual(actual, expected, `${fail(this.#testNo)}: ${message}`)
+            console.log(pass(this.#testNo))       
+        }
+        catch(err)
+        {
+            console.log(err.message+WHITE)   
+        }
+        finally
+        {
+            this.#testNo++;
+        }
+
     }
 
     /**
@@ -47,10 +65,21 @@ class Tester {
      * @param {any} actual 
      * @param {string} message 
      */
-    assertNotEq = (expected, actual, message = NE_MESSAGE(expected, actual)) => {
-        notDeepStrictEqual(actual, expected, `${fail(this.#testNo)}: ${message}`)
-        console.log(pass(this.#testNo))
-        this.#testNo++;
+    assertNotEq = (expected, actual, message = NE_MESSAGE(expected, actual)) => 
+    {
+        try
+        {
+            notDeepStrictEqual(actual, expected, `${fail(this.#testNo)}: ${message}`)
+            console.log(pass(this.#testNo))
+        }
+        catch(err)
+        {
+            console.log(err.message+WHITE)  
+        }
+        finally
+        {
+            this.#testNo++;
+        }
     }
 
     //boolean
@@ -126,7 +155,7 @@ class Tester {
      * @param {number} actual 
      * @param {number} start 
      * @param {number} end 
-     * @param {Object} include 
+     * @param {Object} include {start: boolean, end: boolean}
      */
     assertInRange = (actual, start, end, include = { start: true, end: true }) => {
         if (!start || !end)
@@ -178,10 +207,10 @@ class Tester {
      * function throws an error
      * @usage assertThrows(func, expecterError)
      * @usage assertThrows(func, expecterError, {checkMessage: true}, errorMessage)
-     * @param {Function} func 
-     * @param {Error} expectedError 
+     * @param {Function} func function that throws error, call this way: () => func()
+     * @param {Error} expectedError expected error type
      * @param {Object} options {checkMessage: boolean} 
-     * @param {string} errorMessage 
+     * @param {string} errorMessage expected error message
      */
     assertThrows = (func, expectedError, options ={checkMessage: false}, errorMessage= "") =>
     {
@@ -212,5 +241,11 @@ class Tester {
     }
 }
 
+const test = async(description="") => 
+{
+    console.log()
+    const t = new Tester(description)
+    return t;
+}
 
-export default Tester
+export default test
