@@ -85,4 +85,3 @@ assertHasValue(actual: Object, value: any)
 assertThrows(func: Function, expectedError: Error)
 assertThrows(func: Function, expectedError: Error, options: {checkMessage: boolean}, errorMessage: String)
 ```
-### Usage for advanced assert functions
