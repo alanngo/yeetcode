@@ -2,6 +2,11 @@
 
 ## Promise Based Unit Testing
 
+### Git repo
+https://github.com/alanngo/yeetcode.git
+
+### NPM package
+https://www.npmjs.com/package/yeetcode
 
 ### Install
 
@@ -47,6 +52,28 @@ test("Test Suite 0").then(ut =>
 })
 ...
 ```
+
+## Options
+
+### Default configuration
+```js
+{
+    haltOnFailure: true // stop or continue tests after failure
+}
+```
+
+### Creating Test w/ Options
+```js
+const options = {haltOnFailure: false} // all tests will run regardless of failure
+import test from 'yeetcode'
+
+const foo = (a,b) => a + b
+test("TestDescription", options).then(ut =>
+{
+    ut.assertEq(5, foo(3 + 2))
+})
+```
+
 
 
 ### All assert functions

@@ -34,7 +34,7 @@ test("These tests work").then(unitTest => {
     unitTest.assertThrows(() => foo(), Error, { checkMessage: true }, "poop")
 })
 .then(() => { 
-        test("These should fail").then(unitTest => {
+        test("These should fail", {haltOnFailuire: false}).then(unitTest => {
             // fail a test
             unitTest.assertEq(55, 5)
             unitTest.assertNotEq(5, 5)
@@ -52,41 +52,10 @@ test("These tests work").then(unitTest => {
             unitTest.assertGreaterOrEq(55, 5)
             unitTest.assertLessOrEq(3, 33)
             unitTest.assertInRange(2, 5, 6)
+            unitTest.assertInRange(0, 0, 1)
+
             unitTest.assertKeyValue(myObj, "k", "v")
             unitTest.assertThrows(() => foo(), Error, { checkMessage: true }, "chips")
-        }).then(() => {
-            test("0 or Negative Numbers").then(ut => {
-                ut.assertThrows(() => perfectEven(0), Error)
-                ut.assertThrows(() => perfectEven(-3), Error, { checkMessage: true }, 'cannot take log of -3')
-            }).then(() => {
-                test("Odd Number").then(ut => {
-                    ut.assertFalse(perfectEven(3))
-                })
-            }).then(() => {
-                test("Even Number w/ odd factors").then(ut => {
-                    ut.assertFalse(perfectEven(24))
-                })
-            }).then(() => {
-                test("Perfect Even Numbers").then(ut => {
-                    ut.assertTrue(perfectEven(64))
-                }).catch(err => console.log(err))
-            }).then(() => {
-                test("Test assert in range").then(ut => {
-                    ut.assertInRange(10, 1, 10, { start: true, end: true })
-                })
-            }).then(() => {
-                test("Fail assert in range").then(ut => {
-                    ut.assertInRange(10, 1, 10, { start: true, end: false })
-                })
-            }).then(() => {
-                test("Poop").then(ut => {
-                    ut.assertInRange(1, 1, 10, { start: false, end: false })
-                })
-            }).then(() => {
-                test("I won").then(ut => {
-                    ut.assertInRange(1, 1, 10, { start: false, end: false })
-                })
-            })
         })
 })
 

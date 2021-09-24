@@ -1,4 +1,4 @@
-import {deepStrictEqual, notDeepStrictEqual, AssertionError } from 'assert'
+import { deepStrictEqual, notDeepStrictEqual, AssertionError } from 'assert'
 const RED = "\x1b[31m"
 const YELLOW = "\x1b[33m"
 const GREEN = "\x1b[32m"
@@ -6,29 +6,29 @@ const WHITE = "\x1b[37m"
 
 const EQ_MESSAGE = (expected, actual) => `${RED}Expected ${expected}, got ${actual}`
 const NE_MESSAGE = (expected, actual) => `${RED}Expected value other than ${expected}, got ${actual}`
-const BOOLEAN_MESSAGE = (bool) =>`${RED}Statement should be ${bool}`
+const BOOLEAN_MESSAGE = (bool) => `${RED}Statement should be ${bool}`
 const COMPARE_MESSAGE = (expected, actual, operator) => `${RED}${actual} is not ${operator} than ${expected}`
 const RANGE_MESSAGE = (actual, start, end, incStart, incEnd) => `${RED}${actual} is not in range of ${incStart}${start}, ${end}${incEnd}`
 const OBJ_MESSAGE = (key, value) => `${RED}Key: ${key} does not map to Value: ${value}`
 const KEY_MESSAGE = (key) => `${RED}${key} is not present in the object's keys`
 const VAL_MESSAGE = (value) => `${RED}${value} is not present in the object's values`
-const THROW_MESSAGE = (error) =>`${RED}${error} was not thrown`
-const ERR_MESSAGE = (expected, expectedMessage, actual) =>`${RED}Wrong Error thrown and/or wrong message\n`+
-`Excpected Error: ${expected.name}, Message: ${expectedMessage}\n`+
-`Actual Error Thrown: ${actual.name}, Message: ${actual.message}`
+const THROW_MESSAGE = (error) => `${RED}${error} was not thrown`
+const ERR_MESSAGE = (expected, expectedMessage, actual) => `${RED}Wrong Error thrown and/or wrong message\n` +
+    `Excpected Error: ${expected.name}, Message: ${expectedMessage}\n` +
+    `Actual Error Thrown: ${actual.name}, Message: ${actual.message}`
 
- 
-let pass = (n) => `${GREEN}🧪 Test Case ${n} passed ✔️${WHITE}`
-let fail = (n) => `${RED}🔥 TEST CASE ${n} FAILED ❌ ${WHITE}`
 
-class Tester 
-{
+const pass = (n) => `${GREEN}🧪 Test Case ${n} passed ✔️${WHITE}`
+const fail = (n) => `${RED}🔥 TEST CASE ${n} FAILED ❌ ${WHITE}`
+
+class Tester {
     // private variables
     #testNo
+    #options
 
-    constructor(description="") 
-    {
+    constructor(description, options) {
         this.#testNo = 0
+        this.#options = options
         console.log("========================================================================")
         console.log(`Description: ${description}`)
         console.log("========================================================================")
@@ -36,48 +36,42 @@ class Tester
 
     // values
     /**
-     * 
+     * deep strict equals
      * @param {any} expected 
      * @param {any} actual
      * @param {string} message 
      */
-    assertEq = (expected, actual, message = EQ_MESSAGE(expected, actual)) => 
-    {
-        try
-        {
+    assertEq = (expected, actual, message = EQ_MESSAGE(expected, actual)) => {
+        try {
             deepStrictEqual(actual, expected, `${fail(this.#testNo)}: ${message}`)
-            console.log(pass(this.#testNo))       
+            console.log(pass(this.#testNo))
         }
-        catch(err)
-        {
-            console.log(err.message+WHITE)   
+        catch (err) {
+            if (this.#options.haltOnFailuire) throw err
+            else console.log(err.message + WHITE)
         }
-        finally
-        {
+        finally {
             this.#testNo++;
         }
 
     }
 
     /**
-     * 
+     * deep strict not equals
      * @param {any} expected 
      * @param {any} actual 
      * @param {string} message 
      */
-    assertNotEq = (expected, actual, message = NE_MESSAGE(expected, actual)) => 
-    {
-        try
-        {
+    assertNotEq = (expected, actual, message = NE_MESSAGE(expected, actual)) => {
+        try {
             notDeepStrictEqual(actual, expected, `${fail(this.#testNo)}: ${message}`)
             console.log(pass(this.#testNo))
         }
-        catch(err)
-        {
-            console.log(err.message+WHITE)  
+        catch (err) {
+            if (this.#options.haltOnFailuire) throw err
+            else console.log(err.message + WHITE)
         }
-        finally
-        {
+        finally {
             this.#testNo++;
         }
     }
@@ -158,25 +152,25 @@ class Tester
      * @param {Object} include {start: boolean, end: boolean}
      */
     assertInRange = (actual, start, end, include = { start: true, end: true }) => {
-        if (!start || !end)
-            console.warn(`${YELLOW} Usage:⚠️
-        assertInRange(actual, start, end)
-        assertInRange(actual, start, end, {start: boolean, end: boolean})
-        ${WHITE}`)
-
-        else if (include.start && include.end)
+        if (include.start && include.end) // inclusive
             this.assertTrue(actual >= start && actual <= end, RANGE_MESSAGE(actual, start, end, '[', ']'))
 
-        else if (!include.start && !include.end)
+        else if (!include.start && !include.end) //exclusive
             this.assertTrue(actual > start && actual < end, RANGE_MESSAGE(actual, start, end, '(', ')'))
 
-        else if (include.start && !include.end)
+        else if (include.start && !include.end) //include start exclude end
             this.assertTrue(actual >= start && actual < end, RANGE_MESSAGE(actual, start, end, '[', ')'))
 
-        else if (!include.start && include.end)
+        else if (!include.start && include.end) //exclude start include end
             this.assertTrue(actual > start && actual <= end, RANGE_MESSAGE(actual, start, end, '(', ']'))
 
-        else console.error(`${RED}something went wrong!❌`)
+        else
+        {
+            const unknownFailure = `${RED}something went wrong!❌`
+            if (this.#options.haltOnFailuire) throw new Error(unknownFailure)
+            else console.error(unknownFailure)
+        }
+         
     }
 
     //objects
@@ -212,39 +206,35 @@ class Tester
      * @param {Object} options {checkMessage: boolean} 
      * @param {string} errorMessage expected error message
      */
-    assertThrows = (func, expectedError, options ={checkMessage: false}, errorMessage= "") =>
-    {
+    assertThrows = (func, expectedError, options = { checkMessage: false }, errorMessage = "") => {
         let flag = false
-        try
-        {
+        try {
             func()
         }
-        catch(actualError)
-        {
+        catch (actualError) {
             flag = true
             if (!options.checkMessage)
                 this.assertEq(actualError.name, expectedError.name)
             else
                 this.assertTrue(
-                    actualError.name===expectedError.name && 
+                    actualError.name === expectedError.name &&
                     actualError.message === errorMessage,
                     ERR_MESSAGE(expectedError, errorMessage, actualError)
                 )
         }
-        if (!flag) 
+        if (!flag)
             throw new AssertionError(
-            {
-                message: `${fail(this.#testNo)}: ${THROW_MESSAGE(expectedError.name)}`,
-                expected: expectedError.name,
-                actual: func
-            })
+                {
+                    message: `${fail(this.#testNo)}: ${THROW_MESSAGE(expectedError.name)}`,
+                    expected: expectedError.name,
+                    actual: func
+                })
     }
 }
 
-const test = async(description="") => 
-{
+const test = async (description = "", options = { haltOnFailuire: true }) => {
     console.log()
-    const t = new Tester(description)
+    const t = new Tester(description, options)
     return t;
 }
 
