@@ -10,7 +10,7 @@ const perfectEven = (n) => {
 const myObj = { key: "value" }
 const foo = () => { throw new Error("poop") }
 
-test("These tests work").then(unitTest => {
+test("These tests work", {writeToFile:true}).then(unitTest => {
     unitTest.assertEq(5, 5)
     unitTest.assertNotEq(5, 4)
     unitTest.assertTrue(true)
@@ -34,7 +34,7 @@ test("These tests work").then(unitTest => {
     unitTest.assertThrows(() => foo(), Error, { checkMessage: true }, "poop")
 })
 .then(() => { 
-        test("These should fail", {haltOnFailuire: false}).then(unitTest => {
+        test("These should fail", {haltOnFailuire: false, writeToFile:true}).then(unitTest => {
             // fail a test
             unitTest.assertEq(55, 5)
             unitTest.assertNotEq(5, 5)
@@ -53,7 +53,6 @@ test("These tests work").then(unitTest => {
             unitTest.assertLessOrEq(3, 33)
             unitTest.assertInRange(2, 5, 6)
             unitTest.assertInRange(0, 0, 1)
-
             unitTest.assertKeyValue(myObj, "k", "v")
             unitTest.assertThrows(() => foo(), Error, { checkMessage: true }, "chips")
         })

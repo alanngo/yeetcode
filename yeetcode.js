@@ -1,4 +1,5 @@
 import { deepStrictEqual, notDeepStrictEqual, AssertionError } from 'assert'
+import { appendFileSync } from 'fs'
 const RED = "\x1b[31m"
 const YELLOW = "\x1b[33m"
 const GREEN = "\x1b[32m"
@@ -6,6 +7,8 @@ const WHITE = "\x1b[37m"
 
 const EQ_MESSAGE = (expected, actual) => `${RED}Expected ${expected}, got ${actual}`
 const NE_MESSAGE = (expected, actual) => `${RED}Expected value other than ${expected}, got ${actual}`
+const MATCH_MESSAGE = (expected, actual) => `${RED}${actual} does not match pattern ${expected}`
+const NOT_MATCH_MESSAGE = (expected, actual) => `${RED}${actual} matches pattern ${expected}`
 const BOOLEAN_MESSAGE = (bool) => `${RED}Statement should be ${bool}`
 const COMPARE_MESSAGE = (expected, actual, operator) => `${RED}${actual} is not ${operator} than ${expected}`
 const RANGE_MESSAGE = (actual, start, end, incStart, incEnd) => `${RED}${actual} is not in range of ${incStart}${start}, ${end}${incEnd}`
@@ -14,12 +17,23 @@ const KEY_MESSAGE = (key) => `${RED}${key} is not present in the object's keys`
 const VAL_MESSAGE = (value) => `${RED}${value} is not present in the object's values`
 const THROW_MESSAGE = (error) => `${RED}${error} was not thrown`
 const ERR_MESSAGE = (expected, expectedMessage, actual) => `${RED}Wrong Error thrown and/or wrong message\n` +
-    `Excpected Error: ${expected.name}, Message: ${expectedMessage}\n` +
-    `Actual Error Thrown: ${actual.name}, Message: ${actual.message}`
+    `Excpected Error: ${expected.name}, Expected Message: ${expectedMessage}\n` +
+    `Actual Error Thrown: ${actual.name}, Actual Message: ${actual.message}`
 
 
 const pass = (n) => `${GREEN}🧪 Test Case ${n} passed ✔️${WHITE}`
 const fail = (n) => `${RED}🔥 TEST CASE ${n} FAILED ❌ ${WHITE}`
+const writeToFile = (data) => {
+    appendFileSync("results.log",  String(`${data}\n`)
+    .replace(RED, '')
+    .replace(GREEN, '')
+    .replace(WHITE, '')
+    .replace(YELLOW, '')
+    .replace('[31m', ''), (err) => 
+    {
+        if (err) console.error(err)
+    })
+}
 
 class Tester {
     // private variables
@@ -30,8 +44,17 @@ class Tester {
         this.#testNo = 0
         this.#options = options
         console.log("========================================================================")
-        console.log(`Description: ${description}`)
+        console.log(`
+        Description: ${description}
+        ${this.#options.writeToFile?"File logging is enabled, look in results.log":""}
+        `)
         console.log("========================================================================")
+        if (this.#options.writeToFile){
+            writeToFile("========================================================================")
+            writeToFile(`Description: ${description}`)
+            writeToFile("========================================================================")
+        } 
+
     }
 
     // values
@@ -45,10 +68,12 @@ class Tester {
         try {
             deepStrictEqual(actual, expected, `${fail(this.#testNo)}: ${message}`)
             console.log(pass(this.#testNo))
+            if (this.#options.writeToFile) writeToFile(pass(this.#testNo))
         }
         catch (err) {
+            if (this.#options.writeToFile) writeToFile(err.message)
             if (this.#options.haltOnFailuire) throw err
-            else console.log(err.message + WHITE)
+            console.log(err.message + WHITE)
         }
         finally {
             this.#testNo++;
@@ -66,10 +91,12 @@ class Tester {
         try {
             notDeepStrictEqual(actual, expected, `${fail(this.#testNo)}: ${message}`)
             console.log(pass(this.#testNo))
+            if (this.#options.writeToFile) writeToFile(pass(this.#testNo))
         }
         catch (err) {
+            if (this.#options.writeToFile) writeToFile(err.message)
             if (this.#options.haltOnFailuire) throw err
-            else console.log(err.message + WHITE)
+            console.log(err.message + WHITE)
         }
         finally {
             this.#testNo++;
@@ -104,14 +131,14 @@ class Tester {
      * @param {RegExp | String} actual 
      * @param {RegExp} pattern 
      */
-    assertMatch = (actual, pattern) => this.assertTrue(pattern.test(actual))
+    assertMatch = (actual, pattern) => this.assertTrue(pattern.test(actual), MATCH_MESSAGE(pattern, actual))
 
     /**
      * does not match regexp
      * @param {RegExp | String} actual 
      * @param {RegExp} pattern 
      */
-    assertNotMatch = (actual, pattern) => this.assertFalse(pattern.test(actual));
+    assertNotMatch = (actual, pattern) => this.assertFalse(pattern.test(actual), NOT_MATCH_MESSAGE(pattern, actual));
 
     //numbers 
     /**
@@ -164,13 +191,12 @@ class Tester {
         else if (!include.start && include.end) //exclude start include end
             this.assertTrue(actual > start && actual <= end, RANGE_MESSAGE(actual, start, end, '(', ']'))
 
-        else
-        {
+        else {
             const unknownFailure = `${RED}something went wrong!❌`
             if (this.#options.haltOnFailuire) throw new Error(unknownFailure)
-            else console.error(unknownFailure)
+            console.error(unknownFailure)
         }
-         
+
     }
 
     //objects
@@ -231,8 +257,12 @@ class Tester {
                 })
     }
 }
-
-const test = async (description = "", options = { haltOnFailuire: true }) => {
+const OPTIONS =
+{
+    haltOnFailuire: true,
+    writeToFile: false
+}
+const test = async (description = "", options = OPTIONS) => {
     console.log()
     const t = new Tester(description, options)
     return t;

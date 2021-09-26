@@ -58,7 +58,8 @@ test("Test Suite 0").then(ut =>
 ### Default configuration
 ```js
 {
-    haltOnFailure: true // stop or continue tests after failure
+    haltOnFailure: true, // stop or continue tests after failure
+    writeToFile: false // output test results to 'results.log'
 }
 ```
 
