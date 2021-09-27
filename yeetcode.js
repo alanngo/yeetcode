@@ -72,7 +72,7 @@ class Tester {
         }
         catch (err) {
             if (this.#options.writeToFile) writeToFile(err.message)
-            if (this.#options.haltOnFailuire) throw err
+            if (this.#options.haltOnFailure) throw err
             console.log(err.message + WHITE)
         }
         finally {
@@ -95,7 +95,7 @@ class Tester {
         }
         catch (err) {
             if (this.#options.writeToFile) writeToFile(err.message)
-            if (this.#options.haltOnFailuire) throw err
+            if (this.#options.haltOnFailure) throw err
             console.log(err.message + WHITE)
         }
         finally {
@@ -193,7 +193,7 @@ class Tester {
 
         else {
             const unknownFailure = `${RED}something went wrong!❌`
-            if (this.#options.haltOnFailuire) throw new Error(unknownFailure)
+            if (this.#options.haltOnFailure) throw new Error(unknownFailure)
             console.error(unknownFailure)
         }
 
@@ -259,7 +259,7 @@ class Tester {
 }
 const OPTIONS =
 {
-    haltOnFailuire: true,
+    haltOnFailure: true,
     writeToFile: false
 }
 const test = async (description = "", options = OPTIONS) => {
