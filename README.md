@@ -22,7 +22,7 @@ import test from 'yeetcode'
 const foo = (a,b) => a + b
 test("TestDescription").then(ut =>
 {
-    ut.assertEq(5, foo(3 + 2))
+    ut.assertEq(5, foo(3, 2))
 })
 ```
 
