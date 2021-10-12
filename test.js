@@ -34,8 +34,10 @@ test("These tests work", {writeToFile:true}).then(unitTest => {
     unitTest.assertThrows(() => foo(), Error, { checkMessage: true }, "poop")
 })
 .then(() => { 
-        test("These should fail", {haltOnFailuire: false, writeToFile:true}).then(unitTest => {
+        test("These should fail").then(unitTest => {
             // fail a test
+            unitTest.assertEq(55, 55)
+
             unitTest.assertEq(55, 5)
             unitTest.assertNotEq(5, 5)
             unitTest.assertTrue(false)
@@ -55,6 +57,9 @@ test("These tests work", {writeToFile:true}).then(unitTest => {
             unitTest.assertInRange(0, 0, 1)
             unitTest.assertKeyValue(myObj, "k", "v")
             unitTest.assertThrows(() => foo(), Error, { checkMessage: true }, "chips")
+        }).catch(err => {
+            console.trace(err)
+            process.exit(1)
         })
 })
 

@@ -5,6 +5,8 @@ const YELLOW = "\x1b[33m"
 const GREEN = "\x1b[32m"
 const WHITE = "\x1b[37m"
 
+
+// messages
 const EQ_MESSAGE = (expected, actual) => `${RED}Expected ${expected}, got ${actual}`
 const NE_MESSAGE = (expected, actual) => `${RED}Expected value other than ${expected}, got ${actual}`
 const MATCH_MESSAGE = (expected, actual) => `${RED}${actual} does not match pattern ${expected}`
@@ -43,6 +45,7 @@ class Tester {
     constructor(description, options) {
         this.#testNo = 0
         this.#options = options
+        // console.log(options)
         console.log("========================================================================")
         console.log(`
         Description: ${description}
@@ -257,15 +260,12 @@ class Tester {
                 })
     }
 }
-const OPTIONS =
+const DEFAULT_OPTIONS =
 {
     haltOnFailure: true,
     writeToFile: false
 }
-const test = async (description = "", options = OPTIONS) => {
-    console.log()
-    const t = new Tester(description, options)
-    return t;
-}
+const test = async (description = "", options = {}) => new Tester(description, {...DEFAULT_OPTIONS, ...options})
+
 
 export default test
